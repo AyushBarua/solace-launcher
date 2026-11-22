@@ -1,0 +1,6 @@
+{
+  "type": "web",
+  "force_fullscreen": true,
+  "show_quit_button": true,
+  "difficulty_multiplier": 0.6
+}

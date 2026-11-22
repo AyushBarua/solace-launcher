@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Bubble Shooter</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html, body {
+    width: 100%; height: 100%;
+    background: #111;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /*
+   * The canvas stays at its native 628×628 resolution so all game
+   * coordinates work correctly. We scale it up via CSS transform to
+   * fill the available viewport, preserving the square aspect ratio.
+   * getBoundingClientRect() on the canvas will return the SCALED rect,
+   * so mouse coordinate mapping in the original JS works automatically.
+   */
+  #viewport {
+    display: block;
+    width: 628px;
+    height: 628px;
+    image-rendering: pixelated;   /* crisp pixels when scaled up */
+    transform-origin: center center;
+  }
+</style>
+</head>
+<body>
+<canvas id="viewport" width="628" height="628"></canvas>
+<script type='text/javascript' src='bubble-shooter-example.js'></script>
+<script>
+  // ── Fullscreen scale-to-fit ──────────────────────────────────────────────
+  // Scale the 628×628 canvas so it fills the smaller viewport dimension
+  // while staying perfectly square (no distortion, no clipping).
+  function scaleCanvas() {
+    var canvas = document.getElementById('viewport');
+    var scaleX = window.innerWidth  / 628;
+    var scaleY = window.innerHeight / 628;
+    var scale  = Math.min(scaleX, scaleY);   // fit inside viewport
+    canvas.style.transform = 'scale(' + scale + ')';
+  }
+
+  window.addEventListener('resize', scaleCanvas);
+  scaleCanvas();   // apply immediately on load
+
+  // ── QWebEngine load-event shim ───────────────────────────────────────────
+  // QWebEngine sometimes doesn't fire window.onload for file:// pages.
+  // Fire it manually once DOMContentLoaded confirms the DOM is ready.
+  (function() {
+    var fired = false;
+    function tryFire() {
+      if (fired) return;
+      fired = true;
+      if (typeof window.onload === 'function') window.onload();
+    }
+    if (document.readyState === 'complete') {
+      tryFire();
+    } else {
+      window.addEventListener('load', tryFire);
+      // Fallback: fire on DOMContentLoaded if 'load' never comes
+      document.addEventListener('DOMContentLoaded', function() {
+        setTimeout(tryFire, 200);
+      });
+    }
+  })();
+</script>
+</body>
+</html>

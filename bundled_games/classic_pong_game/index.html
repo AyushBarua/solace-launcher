@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Classic Pong</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html, body {
+      width: 100%; height: 100%;
+      background: #111;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    #gameContainer {
+      position: relative;
+      /* sized by JS to fill viewport */
+    }
+
+    #pongCanvas {
+      display: block;
+      background: #000;
+    }
+
+    #scoreboard {
+      position: absolute;
+      top: 18px;
+      left: 50%;
+      transform: translateX(-50%);
+      color: #fff;
+      font-family: 'Courier New', monospace;
+      font-size: 2.4em;
+      font-weight: bold;
+      letter-spacing: 6px;
+      pointer-events: none;
+      user-select: none;
+      text-shadow: 0 0 12px rgba(255,255,255,0.5);
+    }
+  </style>
+</head>
+<body>
+  <div id="gameContainer">
+    <canvas id="pongCanvas"></canvas>
+    <div id="scoreboard">
+      <span id="playerScore">0</span> : <span id="aiScore">0</span>
+    </div>
+  </div>
+
+  <script>
+    const canvas    = document.getElementById('pongCanvas');
+    const ctx       = canvas.getContext('2d');
+    const container = document.getElementById('gameContainer');
+
+    // ── Responsive sizing ─────────────────────────────────────────────────────
+    // All game values are derived from current canvas size so they scale
+    // correctly on any viewport / window resize.
+
+    let W, H;
+    let PADDLE_W, PADDLE_H, BALL_R, MARGIN;
+    let PLAYER_X, AI_X;
+    let PADDLE_SPEED;
+
+    function applySize() {
+      // Fill the smaller viewport dimension for a clean letterboxed look
+      const vw = window.innerWidth;
+      const vh = window.innerHeight;
+
+      // Pong is a landscape game — fill width, cap at 16:9 height
+      W = vw;
+      H = Math.min(vh, Math.round(vw * 9 / 16));
+
+      canvas.width  = W;
+      canvas.height = H;
+      container.style.width  = W + 'px';
+      container.style.height = H + 'px';
+
+      // Scale all game metrics proportionally
+      PADDLE_W    = Math.round(W * 0.015);
+      PADDLE_H    = Math.round(H * 0.18);
+      BALL_R      = Math.round(H * 0.022);
+      MARGIN      = Math.round(W * 0.022);
+      PLAYER_X    = MARGIN;
+      AI_X        = W - PADDLE_W - MARGIN;
+      PADDLE_SPEED = Math.round(H * 0.012);
+    }
+
+    // ── Game state ────────────────────────────────────────────────────────────
+    let playerY, aiY, ball;
+    let playerScore = 0;
+    let aiScore     = 0;
+
+    function initState() {
+      playerY = H / 2 - PADDLE_H / 2;
+      aiY     = H / 2 - PADDLE_H / 2;
+      ball = {
+        x:  W / 2,
+        y:  H / 2,
+        dx: (Math.random() > 0.5 ? 1 : -1) * W * 0.004,
+        dy: (Math.random() * 2 - 1)         * H * 0.006
+      };
+    }
+
+    function resetBall() {
+      ball.x  = W / 2;
+      ball.y  = H / 2;
+      ball.dx = (Math.random() > 0.5 ? 1 : -1) * W * 0.004;
+      ball.dy = (Math.random() * 2 - 1)         * H * 0.006;
+    }
+
+    let usingController = false;
+
+    // ── Mouse / touch control (left paddle) ───────────────────────────────────
+    canvas.addEventListener('mousemove', (e) => {
+      if (usingController) return; // Ignore mouse if controller is active
+      const rect  = canvas.getBoundingClientRect();
+      const scaleY = H / rect.height;           // account for CSS scaling
+      playerY = (e.clientY - rect.top) * scaleY - PADDLE_H / 2;
+      playerY = Math.max(0, Math.min(H - PADDLE_H, playerY));
+    });
+
+    // ── Solace hardware control (Flexion/Extension) ──────────────────────────
+    window.addEventListener("solace-axes", function(e) {
+      usingController = true; // Controller detected, disable mouse
+      // e.detail.y ranges from roughly -1.0 to 1.0 (flexion/extension)
+      // Map [-1.0, 1.0] to [0, H - PADDLE_H] so the paddle doesn't clip early
+      let targetY = ((e.detail.y + 1.0) / 2.0) * (H - PADDLE_H);
+      playerY = Math.max(0, Math.min(H - PADDLE_H, targetY));
+    });
+
+    // ── Drawing ───────────────────────────────────────────────────────────────
+    function draw() {
+      ctx.clearRect(0, 0, W, H);
+
+      // Centre net
+      ctx.strokeStyle = 'rgba(255,255,255,0.35)';
+      ctx.lineWidth   = 3;
+      ctx.setLineDash([H * 0.04, H * 0.03]);
+      ctx.beginPath();
+      ctx.moveTo(W / 2, 0);
+      ctx.lineTo(W / 2, H);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      // Paddles (rounded)
+      ctx.fillStyle = '#fff';
+      roundRect(ctx, PLAYER_X, playerY, PADDLE_W, PADDLE_H, PADDLE_W / 2);
+      roundRect(ctx, AI_X,     aiY,     PADDLE_W, PADDLE_H, PADDLE_W / 2);
+
+      // Ball (with glow)
+      ctx.shadowBlur  = BALL_R * 2;
+      ctx.shadowColor = 'rgba(255,255,255,0.8)';
+      ctx.beginPath();
+      ctx.arc(ball.x, ball.y, BALL_R, 0, Math.PI * 2);
+      ctx.fillStyle = '#fff';
+      ctx.fill();
+      ctx.shadowBlur = 0;
+    }
+
+    function roundRect(ctx, x, y, w, h, r) {
+      ctx.beginPath();
+      ctx.moveTo(x + r, y);
+      ctx.lineTo(x + w - r, y);
+      ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+      ctx.lineTo(x + w, y + h - r);
+      ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+      ctx.lineTo(x + r, y + h);
+      ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+      ctx.lineTo(x, y + r);
+      ctx.quadraticCurveTo(x, y, x + r, y);
+      ctx.closePath();
+      ctx.fill();
+    }
+
+    // ── Physics ───────────────────────────────────────────────────────────────
+    function checkCollision(px, py) {
+      return (
+        ball.x + BALL_R > px &&
+        ball.x - BALL_R < px + PADDLE_W &&
+        ball.y + BALL_R > py &&
+        ball.y - BALL_R < py + PADDLE_H
+      );
+    }
+
+    function update() {
+      ball.x += ball.dx;
+      ball.y += ball.dy;
+
+      // Top / bottom walls
+      if (ball.y - BALL_R < 0 || ball.y + BALL_R > H) {
+        ball.dy = -ball.dy;
+        ball.y  = Math.max(BALL_R, Math.min(H - BALL_R, ball.y));
+      }
+
+      // Player paddle
+      if (checkCollision(PLAYER_X, playerY)) {
+        ball.dx  = Math.abs(ball.dx) * 1.05;   // slight speed-up on hit
+        let hit  = (ball.y - (playerY + PADDLE_H / 2)) / (PADDLE_H / 2);
+        ball.dy  = hit * H * 0.008;
+        ball.x   = PLAYER_X + PADDLE_W + BALL_R;
+      }
+
+      // AI paddle
+      if (checkCollision(AI_X, aiY)) {
+        ball.dx  = -Math.abs(ball.dx) * 1.05;
+        let hit  = (ball.y - (aiY + PADDLE_H / 2)) / (PADDLE_H / 2);
+        ball.dy  = hit * H * 0.008;
+        ball.x   = AI_X - BALL_R;
+      }
+
+      // Score
+      if (ball.x - BALL_R < 0) { aiScore++;     resetBall(); }
+      if (ball.x + BALL_R > W) { playerScore++;  resetBall(); }
+
+      // AI tracking
+      const aiCenter = aiY + PADDLE_H / 2;
+      if (aiCenter < ball.y - 10) aiY += PADDLE_SPEED;
+      else if (aiCenter > ball.y + 10) aiY -= PADDLE_SPEED;
+      aiY = Math.max(0, Math.min(H - PADDLE_H, aiY));
+
+      document.getElementById('playerScore').textContent = playerScore;
+      document.getElementById('aiScore').textContent     = aiScore;
+    }
+
+    // ── Main loop ─────────────────────────────────────────────────────────────
+    function gameLoop() {
+      update();
+      draw();
+      requestAnimationFrame(gameLoop);
+    }
+
+    // ── Init + resize ─────────────────────────────────────────────────────────
+    function init() {
+      applySize();
+      initState();
+      gameLoop();
+    }
+
+    window.addEventListener('resize', () => {
+      applySize();
+      // Keep paddles in bounds after resize
+      playerY = Math.max(0, Math.min(H - PADDLE_H, playerY));
+      aiY     = Math.max(0, Math.min(H - PADDLE_H, aiY));
+    });
+
+    init();
+  </script>
+</body>
+</html>

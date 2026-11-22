@@ -1,0 +1,366 @@
+[
+  {
+    "id": "snake_game",
+    "name": "Snake Game",
+    "description": "Classic direction-switching game, fast-paced, good for younger patients with basic ROM.",
+    "emoji": "🕹️",
+    "category": "REHAB GAME",
+    "controller_required": true,
+    "path": "",
+    "exe_path": "",
+    "art_url": "",
+    "github_url": "https://github.com/devsargam/SnakeGame/archive/refs/heads/main.zip",
+    "source_link": "github.com/devsargam/SnakeGame",
+    "is_installed": false,
+    "body_parts": [
+      "arm",
+      "vertical"
+    ],
+    "difficulty_tag": "advanced",
+    "age_groups": [
+      "15-24"
+    ],
+    "movements": [
+      "Flexion/Extension"
+    ],
+    "approved": true,
+    "genre": "Arcade",
+    "interaction_params": "Direction Control + Speed/Velocity",
+    "game_config": {
+      "type": "web",
+      "force_fullscreen": true,
+      "show_quit_button": true
+    },
+    "code_patches": []
+  },
+  {
+    "id": "javascript_racer_v5",
+    "name": "Javascript Racer v5",
+    "description": "Pseudo-3D Outrun-style racer, more visual reward, good for high engagement.",
+    "emoji": "🏎️",
+    "category": "REHAB GAME",
+    "controller_required": true,
+    "path": "",
+    "exe_path": "",
+    "art_url": "",
+    "github_url": "https://github.com/lrq3000/javascript-racer/archive/refs/heads/master.zip",
+    "source_link": "lrq3000.github.io/javascript-racer/v5.game.html",
+    "is_installed": true,
+    "body_parts": [
+      "wrist",
+      "horizontal"
+    ],
+    "difficulty_tag": "advanced",
+    "age_groups": [
+      "15-24"
+    ],
+    "movements": [
+      "Supination/Pronation"
+    ],
+    "approved": true,
+    "genre": "Racing",
+    "interaction_params": "Speed/Velocity + Acceleration/Smoothness",
+    "game_config": {
+      "type": "web",
+      "entry_point": "v5.game.html",
+      "force_fullscreen": true,
+      "show_quit_button": true
+    },
+    "code_patches": [],
+    "bundled_path": "bundled_games/javascript_racer_v5/v5.game.html",
+    "movements_original": [
+      "Radial/Ulnar Deviation"
+    ],
+    "movement_note": "Relabelled 2026-07-06: radial/ulnar is not mapped by the current controller; the X axis these games read carries pronation/supination. Restore movements_original when radial/ulnar is added as a third axis."
+  },
+  {
+    "id": "tilting_maze_game",
+    "name": "Tilting Maze Game",
+    "description": "Tilt board to roll ball to target. Very direct mapping to rotation angle.",
+    "emoji": "🧩",
+    "category": "REHAB GAME",
+    "controller_required": true,
+    "path": "",
+    "exe_path": "",
+    "art_url": "",
+    "github_url": "https://github.com/dollpriyanka/Tilting_Maze_Game/archive/refs/heads/main.zip",
+    "source_link": "github.com/dollpriyanka/Tilting_Maze_Game",
+    "is_installed": false,
+    "body_parts": [
+      "wrist",
+      "horizontal"
+    ],
+    "difficulty_tag": "intermediate",
+    "age_groups": [
+      "41-60"
+    ],
+    "movements": [
+      "Hybrid (Combined)"
+    ],
+    "approved": true,
+    "genre": "Puzzle",
+    "interaction_params": "Position/Angle (target matching) + Hold-at-position",
+    "game_config": {
+      "type": "web",
+      "force_fullscreen": true,
+      "show_quit_button": true
+    },
+    "code_patches": [],
+    "bundled_path": "bundled_games/tilting_maze_game/index.html",
+    "movements_original": [
+      "Radial/Ulnar Deviation"
+    ],
+    "movement_note": "Full gyro: pron/sup + flex/ext tilt the board to roll the ball."
+  },
+  {
+    "id": "archery_game_svg",
+    "name": "Archery Game SVG (Yashukiran)",
+    "description": "SVG-based aiming with curved trajectory, dynamic feedback on hits/misses.",
+    "emoji": "🎯",
+    "category": "REHAB GAME",
+    "controller_required": true,
+    "path": "",
+    "exe_path": "",
+    "art_url": "",
+    "github_url": "https://github.com/Yashukiran/Archery-game/archive/refs/heads/main.zip",
+    "source_link": "github.com/Yashukiran/Archery-game",
+    "is_installed": false,
+    "body_parts": [
+      "wrist"
+    ],
+    "difficulty_tag": "intermediate",
+    "age_groups": [
+      "41-60"
+    ],
+    "movements": [
+      "Hybrid (Combined)"
+    ],
+    "approved": true,
+    "genre": "Sports/Skill",
+    "interaction_params": "Position/Angle + Force/Effort",
+    "game_config": {
+      "type": "web",
+      "force_fullscreen": true,
+      "show_quit_button": true
+    },
+    "code_patches": [],
+    "bundled_path": "bundled_games/archery_game_svg/index.html",
+    "movement_note": "Flex/ext draws the bow, pron/sup angles it, squeeze shoots."
+  },
+  {
+    "id": "simon_says",
+    "name": "Simon Says",
+    "description": "Button-press sequence memory game. Maps to discrete digit isolation + working memory.",
+    "emoji": "🧠",
+    "category": "REHAB GAME",
+    "controller_required": true,
+    "path": "",
+    "exe_path": "",
+    "art_url": "",
+    "github_url": "https://github.com/th3alexdev/simonsays/archive/refs/heads/main.zip",
+    "source_link": "github.com/th3alexdev/simonsays",
+    "is_installed": false,
+    "body_parts": [
+      "wrist"
+    ],
+    "difficulty_tag": "intermediate",
+    "age_groups": [
+      "41-60"
+    ],
+    "movements": [
+      "Flexion/Extension"
+    ],
+    "approved": true,
+    "genre": "Cognitive/Sequence",
+    "interaction_params": "Sequencing + Rhythm/Timing",
+    "game_config": {
+      "type": "web",
+      "force_fullscreen": true,
+      "show_quit_button": true
+    },
+    "code_patches": [],
+    "bundled_path": "bundled_games/simon_says/index.html",
+    "movement_note": "Flex/Extend dials through the 4 buttons; squeeze selects."
+  },
+  {
+    "id": "classic_pong_game",
+    "name": "Classic Pong Game",
+    "description": "Two-paddle classic, can be set single-player vs wall for simplicity.",
+    "emoji": "🏓",
+    "category": "REHAB GAME",
+    "controller_required": true,
+    "path": "",
+    "exe_path": "",
+    "art_url": "",
+    "github_url": "https://github.com/njoshly/Classic-pong-Game/archive/refs/heads/main.zip",
+    "source_link": "github.com/njoshly/Classic-pong-Game",
+    "is_installed": true,
+    "body_parts": [
+      "arm",
+      "vertical"
+    ],
+    "difficulty_tag": "beginner",
+    "age_groups": [
+      "61-70"
+    ],
+    "movements": [
+      "Flexion/Extension"
+    ],
+    "approved": true,
+    "genre": "Sports/Arcade",
+    "interaction_params": "Position/Angle (tracking) + Repetition/Endurance",
+    "game_config": {
+      "type": "web",
+      "force_fullscreen": true,
+      "show_quit_button": true
+    },
+    "code_patches": [],
+    "bundled_path": "bundled_games/classic_pong_game/index.html"
+  },
+  {
+    "id": "bubble_shooter_html5",
+    "name": "Bubble Shooter HTML5 (rembound)",
+    "description": "Well-documented tutorial-grade implementation, good base to extend.",
+    "emoji": "🫧",
+    "category": "REHAB GAME",
+    "controller_required": true,
+    "path": "",
+    "exe_path": "",
+    "art_url": "",
+    "github_url": "https://github.com/rembound/Bubble-Shooter-HTML5/archive/refs/heads/master.zip",
+    "source_link": "github.com/rembound/Bubble-Shooter-HTML5",
+    "is_installed": true,
+    "body_parts": [
+      "wrist"
+    ],
+    "difficulty_tag": "beginner",
+    "age_groups": [
+      "61-70"
+    ],
+    "movements": [
+      "Supination/Pronation"
+    ],
+    "approved": true,
+    "genre": "Puzzle/Aim",
+    "interaction_params": "Position/Angle + Force/Effort",
+    "game_config": {
+      "type": "web",
+      "entry_point": "bubble-shooter.html",
+      "force_fullscreen": true,
+      "show_quit_button": true
+    },
+    "code_patches": [],
+    "bundled_path": "bundled_games/bubble_shooter_html5/bubble-shooter.html"
+  },
+  {
+    "id": "arkanoid",
+    "name": "Breakout / Arkanoid",
+    "description": "Move a paddle to bounce a ball and break bricks. Perfect for horizontal arm movement training.",
+    "category": "REHAB GAME",
+    "controller_required": true,
+    "path": "",
+    "exe_path": "",
+    "art_url": "assets/arkanoid_poster.png",
+    "github_url": "https://github.com/wkeeling/arkanoid/archive/refs/heads/master.zip",
+    "is_installed": true,
+    "body_parts": [
+      "arm",
+      "horizontal"
+    ],
+    "difficulty_tag": "beginner",
+    "game_config": {
+      "type": "web",
+      "force_fullscreen": true,
+      "show_quit_button": true,
+      "difficulty_multiplier": 1.0
+    },
+    "code_patches": [],
+    "age_groups": [
+      "61-70"
+    ],
+    "movements": [
+      "Hybrid (Combined)"
+    ],
+    "approved": true,
+    "genre": "Arcade/Breakout",
+    "interaction_params": "Analog paddle (pronation/supination) + squeeze to launch",
+    "emoji": "🧱",
+    "source_link": "github.com/wkeeling/arkanoid",
+    "bundled_path": "bundled_games/arkanoid/index.html"
+  },
+  {
+    "id": "fruit_game",
+    "name": "Fruit Game (HondaPL)",
+    "description": "Catch fruit avoid bombs, simple binary direction control.",
+    "emoji": "🧺",
+    "category": "REHAB GAME",
+    "controller_required": true,
+    "path": "",
+    "exe_path": "",
+    "art_url": "",
+    "github_url": "https://github.com/HondaPL/FruitGame/archive/refs/heads/main.zip",
+    "source_link": "github.com/HondaPL/FruitGame",
+    "is_installed": true,
+    "body_parts": [
+      "wrist",
+      "horizontal"
+    ],
+    "difficulty_tag": "beginner",
+    "age_groups": [
+      "71-80"
+    ],
+    "movements": [
+      "Supination/Pronation"
+    ],
+    "approved": true,
+    "genre": "Arcade/Catch",
+    "interaction_params": "Direction Control",
+    "game_config": {
+      "type": "web",
+      "force_fullscreen": true,
+      "show_quit_button": true
+    },
+    "code_patches": [],
+    "bundled_path": "bundled_games/fruit_game/3. Fruits Game (JQuery)/index.html",
+    "movements_original": [
+      "Radial/Ulnar Deviation"
+    ],
+    "movement_note": "Relabelled 2026-07-06: radial/ulnar is not mapped by the current controller; the X axis these games read carries pronation/supination. Restore movements_original when radial/ulnar is added as a third axis."
+  },
+  {
+    "id": "fishing_game",
+    "name": "Fishing Game",
+    "description": "Catch fish while dodging obstacles in this relaxing simulation. Great for wrist and arm control.",
+    "category": "REHAB GAME",
+    "controller_required": true,
+    "path": "",
+    "exe_path": "",
+    "art_url": "assets/fishing_poster.png",
+    "github_url": "https://github.com/PrzemekWasinski/FishingGame/archive/refs/heads/main.zip",
+    "is_installed": true,
+    "body_parts": [
+      "arm",
+      "vertical",
+      "horizontal"
+    ],
+    "difficulty_tag": "beginner",
+    "game_config": {
+      "type": "mouse",
+      "force_fullscreen": true,
+      "show_quit_button": true
+    },
+    "code_patches": [],
+    "age_groups": [
+      "80+"
+    ],
+    "movements": [
+      "Hybrid (Combined)"
+    ],
+    "approved": true,
+    "genre": "Casual/Skill",
+    "interaction_params": "Sequencing + Hold-at-position",
+    "emoji": "🎣",
+    "source_link": "github.com/PrzemekWasinski/FishingGame",
+    "bundled_path": "bundled_games/fishing_game/FishingGame-main/main.py"
+  }
+]

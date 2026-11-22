@@ -1,0 +1,1 @@
+var _SOLACE_IMG_SPRITES = "data:image/png;base64," + _SP_CHUNK_1+_SP_CHUNK_2+_SP_CHUNK_3+_SP_CHUNK_4+_SP_CHUNK_5+_SP_CHUNK_6;

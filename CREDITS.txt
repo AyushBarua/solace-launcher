@@ -1,0 +1,58 @@
+CREDITS
+=======
+Solace is released under the MIT licence (see LICENSE). The games below are other
+people's work. Their authors keep their copyrights, and each game keeps its own
+licence. The licence checks were done on 2026-11-22.
+
+------------------------------------------------------------------------------
+BUNDLED IN THIS REPOSITORY (under bundled_games/, each with its licence file)
+------------------------------------------------------------------------------
+1. Javascript Racer v5
+   Author  : Jake Gordon and contributors (lrq3000 fork)
+   Repo    : https://github.com/lrq3000/javascript-racer
+   License : MIT
+
+2. Classic Pong Game
+   Author  : njoshly
+   Repo    : https://github.com/njoshly/Classic-pong-Game
+   License : GNU GPL v3. This game is run by Solace as a separate program and is
+             kept in its own folder with its licence. It is not part of the MIT
+             licensed Solace code.
+
+3. Bubble Shooter HTML5
+   Author  : rembound (Remco Donkers)
+   Repo    : https://github.com/rembound/Bubble-Shooter-HTML5
+   License : MIT
+
+4. Breakout / Arkanoid
+   Author  : wkeeling (Will Keeling)
+   Repo    : https://github.com/wkeeling/arkanoid
+   License : MIT
+
+------------------------------------------------------------------------------
+NOT INCLUDED IN THIS REPOSITORY
+------------------------------------------------------------------------------
+The games below shipped with earlier builds of Solace but are not redistributed
+here, because their upstream repositories had no licence file when checked on
+2026-11-22. Earlier notes that listed them as MIT could not be confirmed. If you
+are one of these authors and want a licence or a removal, open an issue.
+
+- Archery Game SVG       Yashukiran
+- Fishing Game           PrzemekWasinski
+- Fruit Game             HondaPL
+- Simon Says             th3alexdev
+- Tilting Maze Game      dollpriyanka
+
+setup_bundled_games.py can download some of these (Fruit Game, Simon Says, Tilting
+Maze Game) and Archery Game by hassanhaseen (MIT upstream) straight from their
+authors' repositories, for personal use.
+
+------------------------------------------------------------------------------
+OTHER THIRD-PARTY FILES
+------------------------------------------------------------------------------
+- assets/fonts/: Parkinsans, Schibsted Grotesk and Noto Sans Devanagari, SIL Open
+  Font License 1.1 (https://openfontlicense.org).
+- assets/three.min.js and assets/GLTFLoader.js: three.js, MIT licence
+  (https://github.com/mrdoob/three.js).
+
+This software is for research purposes only and is not a medical device.

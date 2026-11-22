@@ -1,0 +1,6 @@
+{
+  "type": "web",
+  "entry_point": "bubble-shooter.html",
+  "force_fullscreen": true,
+  "show_quit_button": true
+}

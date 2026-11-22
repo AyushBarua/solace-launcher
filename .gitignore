@@ -1,0 +1,39 @@
+# Python
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+.pytest_cache/
+
+# Build output
+build/
+dist/
+*.spec.bak
+*.log
+
+# Local data: profiles, sessions, settings, reports. Created at run time and never shared.
+dev_data/
+profiles.json
+active_profile.json
+global_settings.json
+input_config.json
+*.bak
+assets/cache/
+
+# Screenshots and scratch files from development
+redesign_preview_home.png
+
+# Pre-built binaries are not shipped in the source repository
+*.exe
+
+# Third-party games that publish no licence file upstream. Not redistributed here;
+# setup_bundled_games.py downloads them straight from their authors' repositories.
+bundled_games/archery_game_svg/
+bundled_games/fishing_game/
+bundled_games/fruit_game/
+bundled_games/simon_says/
+bundled_games/tilting_maze_game/
+
+# Poster for a game that is not redistributed
+assets/fishing_poster.png
