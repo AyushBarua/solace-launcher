@@ -11,10 +11,9 @@ experiments, not as a replacement for therapy advice.
 
 ![The Play page, with the featured game full screen and the library below](docs/screenshot-play.png)
 
-<video src="https://github.com/AyushBarua/solace-launcher/raw/main/docs/demo.mp4" controls muted width="100%"></video>
+![A 25-second screen recording of the launcher](docs/demo.webp)
 
-A 25-second screen recording of the launcher. If the player does not load, open
-[docs/demo.mp4](docs/demo.mp4).
+The same recording with full resolution is in [docs/demo.mp4](docs/demo.mp4).
 
 ## What it does
 
