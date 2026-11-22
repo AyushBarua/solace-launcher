@@ -9,6 +9,11 @@ It started as research software at the GAMES Lab, IIT Delhi. It is not a medical
 device and has not been clinically validated. Use it for research and
 experiments, not as a replacement for therapy advice.
 
+![The Play page, with the featured game full screen and the library below](docs/screenshot-play.png)
+
+A 25-second screen recording of the launcher is in
+[docs/demo.mp4](docs/demo.mp4). GitHub plays it in the browser when you open it.
+
 ## What it does
 
 - **Play.** A full-screen featured game that rotates through the day's
