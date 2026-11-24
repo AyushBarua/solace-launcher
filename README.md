@@ -71,7 +71,8 @@ tests/             unit tests (pytest)
 ```
 
 Data (profiles, sessions, settings) is stored locally on the machine. Nothing is
-sent anywhere unless a user exports a report.
+sent anywhere unless a user exports a report, apart from the start-up update check
+described under Updates and releases.
 
 ### Optional sign-in
 
@@ -91,6 +92,30 @@ venv\Scripts\pytest tests
 
 `build.bat` packages the app with PyInstaller (`Solace.spec`), and
 `installer.iss` builds a Windows installer with Inno Setup.
+
+## Updates and releases
+
+Installed copies of Solace update themselves from GitHub Releases. When Solace
+starts it asks GitHub for the latest release. If a newer one exists, a notice
+offers to install it, and Settings has an Updates section with a Check now button
+and a switch to turn the start-up check off. The installer is downloaded, checked
+against its SHA-256 checksum and run only when the user chooses Install. Runs from
+source never check, unless `SOLACE_FORCE_UPDATE_CHECK=1` is set.
+
+To publish a new version, push a tag:
+
+```powershell
+git tag v1.0.1
+git push origin v1.0.1
+```
+
+The workflow in `.github/workflows/release.yml` runs the updater tests, builds the
+app and the installer, and attaches `Solace_Setup.exe` and `Solace_Setup.exe.sha256`
+to a new release. A tag with a suffix, such as `v1.1.0-beta`, is published as a
+pre-release, which installed copies ignore. The workflow can also be started by hand
+from the Actions tab to test the build without publishing.
+
+The installer is not code-signed, so Windows SmartScreen may warn on the first run.
 
 ## Contributing
 

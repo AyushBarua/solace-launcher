@@ -3,7 +3,7 @@ SOLACE LICENSE & PRIVACY POLICY
 Solace is open-source software released under the MIT licence. The full text is in the LICENSE file that comes with the source code.
 
 1. PRIVACY POLICY: Your data stays with you.
-Solace stores your therapy data locally on this device only. Nothing is sent to the internet without your action.
+Solace stores your therapy data locally on this device only. Apart from the update check described below, nothing is sent to the internet without your action.
 
 By installing and using Solace, you agree that the software may locally store the following on your device:
 
@@ -11,6 +11,8 @@ By installing and using Solace, you agree that the software may locally store th
 - Session history: Which games you played, for how long, and at what difficulty.
 - Wellbeing check-ins: How you felt after each session (Good / Tired / Pain).
 - Progress reports: Only shared when YOU tap 'Download Report' and save or send the PDF.
+
+Update check: when Solace starts, it asks GitHub whether a newer version exists. GitHub can see this computer's IP address; no therapy data or personal details are sent. A new version only installs when you choose Install, and you can turn the check off under Settings, Updates.
 
 2. LICENCE
 Copyright (c) 2026 Ayush Barua. Permission is granted, free of charge, to use, copy, modify, merge, publish, distribute, sublicense and sell copies of the software, under the conditions of the MIT licence (see LICENSE). The software is provided "as is", without warranty of any kind.

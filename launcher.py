@@ -145,6 +145,11 @@ class MainWindow(QMainWindow):
 
         self.stack = QStackedWidget()
 
+        # ── Updates: background checks, and the notice shown when one is ready ──
+        from ui.updates import UpdateController
+        self.updates = UpdateController(parent=self)
+        self.updates.quit_requested.connect(self.close)     # the installer is running
+
         # ── Pages (3-tab nav) ─────────────────────────────────────────────────
         self._create_pages()
 
@@ -179,6 +184,8 @@ class MainWindow(QMainWindow):
         self.top_bar.raise_()
         self._root_layout = root_layout
         self._make_profile_overlay()          # the "Who's Playing?" page, over everything
+        from ui.updates import UpdateToast
+        self.update_toast = UpdateToast(self.updates, self.centralWidget())
 
         # Default to Play
         self.stack.setCurrentIndex(0)
@@ -219,6 +226,13 @@ class MainWindow(QMainWindow):
         from PyQt6.QtCore import QTimer as _QTimer
         _QTimer.singleShot(2500, self._maybe_first_assessment)
         _QTimer.singleShot(8000, self._maybe_first_assessment)
+        _QTimer.singleShot(6000, self._check_for_updates_on_start)
+
+    def _check_for_updates_on_start(self) -> None:
+        """Look for a newer release once after start-up, if installed and switched on."""
+        from core import updater
+        if updater.should_check_on_start(updater.load_settings()):
+            self.updates.check()
 
     # ── Page construction (also used to rebuild pages on a live theme switch) ──
 
@@ -254,6 +268,7 @@ class MainWindow(QMainWindow):
                 self._open_assessment)
         except AttributeError:
             pass
+        self.settings_page.bind_updates(self.updates)
 
     def _rebuild_for_theme(self):
         """Reload every module that bakes theme colours at import, then rebuild

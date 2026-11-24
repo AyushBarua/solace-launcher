@@ -1,6 +1,11 @@
+; The release workflow passes the version: ISCC /DAppVersion=1.2.3 installer.iss
+#ifndef AppVersion
+  #define AppVersion "1.0.0"
+#endif
+
 [Setup]
 AppName=Solace
-AppVersion=1.0
+AppVersion={#AppVersion}
 DefaultDirName={autopf}\Solace
 DefaultGroupName=Solace
 OutputDir=dist
@@ -24,6 +29,8 @@ Name: "{autodesktop}\Solace"; Filename: "{app}\Solace.exe"; Tasks: desktopicon
 
 [Run]
 Filename: "{app}\Solace.exe"; Description: "Launch Solace now"; Flags: nowait postinstall skipifsilent
+; An in-app update runs this installer silently; open Solace again when it is done.
+Filename: "{app}\Solace.exe"; Flags: nowait runasoriginaluser; Check: WizardSilent
 
 [Code]
 var
@@ -101,8 +108,10 @@ var
   ResultCode: Integer;
 begin
   if CurStep = ssPostInstall then begin
-    WriteSettingsJSON(ExpandConstant('{localappdata}\Solace'), GamesDirPage.Values[0]);
-    
+    // Only on a first install. An update must keep the user's settings.
+    if not FileExists(ExpandConstant('{localappdata}\Solace\global_settings.json')) then
+      WriteSettingsJSON(ExpandConstant('{localappdata}\Solace'), GamesDirPage.Values[0]);
+
     if not IsVCRedistInstalled() then begin
       if FileExists(ExpandConstant('{tmp}\vc_redist.x64.exe')) then begin
         Exec(ExpandConstant('{tmp}\vc_redist.x64.exe'), '/install /quiet /norestart', '', SW_SHOW, ewWaitUntilTerminated, ResultCode);

@@ -1,0 +1,81 @@
+name: Release
+
+# Push a tag such as v1.0.1 and this builds the Windows installer and publishes it
+# as a GitHub Release. Installed copies of Solace find it from there.
+#
+# Run it by hand from the Actions tab to test the build without publishing: only a
+# tag run creates a release.
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: windows-latest
+    env:
+      QT_QPA_PLATFORM: offscreen
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Work out the version
+        id: version
+        shell: pwsh
+        run: |
+          if ($env:GITHUB_REF -like 'refs/tags/v*') { $v = $env:GITHUB_REF_NAME.TrimStart('v') } else { $v = '0.0.0' }
+          "version=$v" >> $env:GITHUB_OUTPUT
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt pytest
+
+      - name: Test the updater
+        run: python -m pytest tests/test_updater.py tests/test_stamp_version.py -q
+
+      - name: Stamp the version into the app
+        run: python scripts/stamp_version.py ${{ steps.version.outputs.version }}
+
+      - name: Build the app
+        run: pyinstaller --noconfirm Solace.spec
+
+      - name: Install Inno Setup
+        run: choco install innosetup -y --no-progress
+
+      - name: Build the installer
+        shell: pwsh
+        run: |
+          & "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe" "/DAppVersion=${{ steps.version.outputs.version }}" installer.iss
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+      - name: Write the checksum
+        shell: pwsh
+        run: |
+          $hash = (Get-FileHash dist\Solace_Setup.exe -Algorithm SHA256).Hash.ToLower()
+          "$hash  Solace_Setup.exe" | Out-File -Encoding ascii dist\Solace_Setup.exe.sha256
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: solace-installer
+          path: |
+            dist/Solace_Setup.exe
+            dist/Solace_Setup.exe.sha256
+          retention-days: 7
+
+      - name: Publish the release
+        if: startsWith(github.ref, 'refs/tags/v')
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $flags = @()
+          # A tag like v1.1.0-beta is a pre-release; installed apps ignore those.
+          if ($env:GITHUB_REF_NAME -like '*-*') { $flags += '--prerelease' }
+          gh release create $env:GITHUB_REF_NAME dist/Solace_Setup.exe dist/Solace_Setup.exe.sha256 `
+            --title "Solace ${{ steps.version.outputs.version }}" --generate-notes @flags

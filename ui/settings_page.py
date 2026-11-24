@@ -371,6 +371,7 @@ class SettingsPage(QScrollArea):
         self._build_audio_panel(layout)
         self._build_account_panel(layout)   # F1
         self._build_therapist_panel(layout)
+        self._build_updates_panel(layout)
         self._build_developer_panel(layout)
 
         layout.addStretch()
@@ -1067,6 +1068,71 @@ class SettingsPage(QScrollArea):
             dlg.accept()
         save.clicked.connect(_save)
         dlg.exec()
+
+    def _build_updates_panel(self, parent_layout):
+        """Software updates: the version, a check / install button, and the start-up switch."""
+        from core import updater
+        from core.version import __version__
+
+        panel = self._add_panel("Updates", "", parent_layout)
+        self._update_controller = None
+
+        btn = QPushButton("Check now")
+        btn.setFixedHeight(48)
+        btn.setMinimumWidth(170)
+        btn.setCursor(Qt.CursorShape.PointingHandCursor)
+        btn.setStyleSheet(_pill_button_qss())
+        btn.clicked.connect(self._on_update_button)
+        inner, lay, t, d = _new_row("Software updates", f"Version {__version__}")
+        lay.addWidget(btn)
+        _install_selection(inner, btn, t, d)
+        inner.action = self._on_update_button
+        panel.content_layout().addWidget(inner)
+        panel.controls.append(inner)
+        self._update_btn, self._update_desc = btn, d
+
+        toggle = self._add_toggle_row(
+            panel, "Check when Solace starts",
+            "Asks GitHub for the newest version each time Solace opens. GitHub sees "
+            "this computer's IP address and nothing else. An update only installs "
+            "when you choose Install.",
+            default_on=updater.is_check_enabled(updater.load_settings()))
+        toggle.toggled_cb = updater.save_check_enabled
+
+    def bind_updates(self, controller) -> None:
+        """Follow the main window's update controller (called once the pages exist)."""
+        self._update_controller = controller
+        controller.changed.connect(self._refresh_update_row)
+        self._refresh_update_row()
+
+    def _refresh_update_row(self) -> None:
+        from ui import updates as _u
+        c = self._update_controller
+        if c is None:
+            return
+        label, enabled = {
+            _u.CHECKING: ("Checking...", False),
+            _u.AVAILABLE: ("Install", True),
+            _u.DOWNLOADING: ("Downloading...", False),
+            _u.READY: ("Starting...", False),
+            _u.FAILED: ("Try again", True),
+        }.get(c.state, ("Check now", True))
+        try:
+            self._update_desc.setText(c.status_text())
+            self._update_btn.setText(label)
+            self._update_btn.setEnabled(enabled)
+        except RuntimeError:                      # the page was rebuilt and this one is gone
+            pass
+
+    def _on_update_button(self) -> None:
+        from ui import updates as _u
+        c = self._update_controller
+        if c is None:
+            return
+        if c.state == _u.AVAILABLE or (c.state == _u.FAILED and c.info is not None):
+            c.install()
+        else:
+            c.check()
 
     def _build_developer_panel(self, parent_layout):
         """Developer-only options."""
