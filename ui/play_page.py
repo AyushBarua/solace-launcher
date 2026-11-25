@@ -587,7 +587,9 @@ class PlayPage(QScrollArea):
         more += [Entry(g, "soon") for g in COMING_SOON]
         if not featured:                               # nothing installed yet: feature downloads
             featured, more = more[:FEATURED_COUNT], more[FEATURED_COUNT:]
-        sections = [("", featured), (t("play_row_mine"), others), (t("play_row_more"), more)]
+        on_this_pc = [Entry(g, "installed") for g in self.game_manager.get_detected_games()]
+        sections = [("", featured), (t("play_row_mine"), others),
+                    (t("play_row_pc"), on_this_pc), (t("play_row_more"), more)]
         return [(title, entries) for title, entries in sections if entries]
 
     def _rebuild(self, keep_id: str | None = None) -> None:
@@ -758,6 +760,7 @@ class PlayPage(QScrollArea):
 
     def refresh(self) -> None:
         """Re-read the games and recommendation (after a session or profile change)."""
+        self.game_manager.refresh_detected()     # pick up newly installed games
         self._rebuild()
         self._banner.refresh()
 

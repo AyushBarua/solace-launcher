@@ -19,9 +19,40 @@ import shutil
 from typing import Optional
 from PyQt6.QtCore import QObject, pyqtSignal
 from core.injector import inject_controller_into_game
+from core.game_scanner import DetectedGame, scan_all
+from core.process_watch import wait_for_game
 
 _HERE = os.path.dirname(os.path.abspath(__file__))
 GAMES_DB = os.path.join(_HERE, "..", "games_db.json")  # kept for legacy compat
+
+
+def open_link(link: str) -> None:
+    """Hand a store link (steam://...) to Windows. Raises OSError if nothing handles it."""
+    os.startfile(link)
+
+
+def _detected_entry(game: DetectedGame) -> dict:
+    """A game found on this PC, in the shape the Play page expects."""
+    return {
+        "id": game.id,
+        "name": game.name,
+        "description": f"Installed from {game.store}. It uses its own controls; "
+                       "the Solace controller is not mapped to it yet.",
+        "genre": game.store,
+        "category": game.store,
+        "body_parts": [],
+        "difficulty_tag": "",
+        "emoji": game.name[:1].upper(),          # shown when there is no cover art
+        "art_url": game.art_path,
+        "is_installed": True,
+        "path": "",
+        "exe_path": "",
+        "game_config": {"type": "store"},
+        "detected": True,
+        "launch": game.launch,
+        "launch_args": list(game.args),
+        "install_dir": game.install_dir,
+    }
 
 
 def _get_catalog_path() -> str:
@@ -62,13 +93,16 @@ class GameManager(QObject):
     download_finished  = pyqtSignal(str)   # emits game_id
     download_failed    = pyqtSignal(str)   # U1: emits game_id on failure
     web_game_requested = pyqtSignal(dict)  # web games — MainWindow opens WebGameWindow
+    game_not_started   = pyqtSignal(str)   # a store game never appeared (emits its name)
 
     def __init__(self, main_window=None):
         super().__init__()
         self.main_window = main_window
         self.is_running  = False
         self._games: list[dict] = []
+        self._detected: list[dict] = []     # found on this PC; never in the therapy list
         self._load()
+        self.refresh_detected()
 
     # ── data ──────────────────────────────────────────────────────────────────
 
@@ -180,7 +214,40 @@ class GameManager(QObject):
         return self._games
 
     def get_game(self, game_id: str) -> Optional[dict]:
-        return next((g for g in self._games if g["id"] == game_id), None)
+        return next((g for g in self._games + self._detected if g["id"] == game_id), None)
+
+    # ── games found on this PC ────────────────────────────────────────────────
+    def get_detected_games(self) -> list[dict]:
+        return self._detected
+
+    def refresh_detected(self) -> None:
+        """Look through the game stores again."""
+        self._detected = [_detected_entry(g) for g in scan_all()]
+
+    def _launch_store_game(self, game: dict) -> None:
+        self.is_running = True
+        self._current_proc = None
+        print(f"[GameManager] Launching installed game: {game['name']}")
+        threading.Thread(target=self._run_store_game, args=(game,), daemon=True).start()
+
+    def _run_store_game(self, game: dict) -> None:
+        """Start the game and wait for it to close (it is not our child process)."""
+        ran = False
+        try:
+            if "://" in game["launch"]:
+                open_link(game["launch"])
+            else:
+                subprocess.Popen([game["launch"], *game["launch_args"]],
+                                 cwd=os.path.dirname(game["launch"]))
+            ran = wait_for_game(game["install_dir"])
+        except OSError as exc:
+            print(f"[GameManager] Could not start {game['name']}: {exc}")
+        finally:
+            self.is_running = False
+        if ran:
+            self.game_finished.emit()
+        else:
+            self.game_not_started.emit(game["name"])
 
     # ── downloading ───────────────────────────────────────────────────────────
     
@@ -383,6 +450,11 @@ class GameManager(QObject):
             return
 
         game_type = game.get("game_config", {}).get("type", "mouse")
+
+        # ── Installed store games: start through the store and watch ───────────
+        if game_type == "store":
+            self._launch_store_game(game)
+            return
 
         # ── Web game path ──────────────────────────────────────────────────────
         if game_type == "web":

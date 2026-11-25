@@ -145,6 +145,7 @@ _STRINGS: dict[str, dict[str, str]] = {
     "play_row_featured":       {"en": "Featured",             "hi": "विशेष"},
     "play_row_mine":          {"en": "Your other games",      "hi": "आपके अन्य गेम"},
     "play_row_more":           {"en": "Get more games",        "hi": "और गेम पाएं"},
+    "play_row_pc":             {"en": "On this computer",      "hi": "इस कंप्यूटर पर"},
     "play_btn_play":           {"en": "Play",                  "hi": "खेलें"},
     "play_btn_download":       {"en": "Download",              "hi": "डाउनलोड करें"},
     "play_btn_downloading":    {"en": "Downloading…",          "hi": "डाउनलोड हो रहा है…"},

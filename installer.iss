@@ -6,6 +6,10 @@
 [Setup]
 AppName=Solace
 AppVersion={#AppVersion}
+AppPublisher=Ayush Barua
+AppPublisherURL=https://github.com/AyushBarua/solace-launcher
+SetupIconFile=assets\solace.ico
+UninstallDisplayIcon={app}\Solace.exe
 DefaultDirName={autopf}\Solace
 DefaultGroupName=Solace
 OutputDir=dist
@@ -24,8 +28,8 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 Source: "dist\Solace\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 
 [Icons]
-Name: "{group}\Solace"; Filename: "{app}\Solace.exe"
-Name: "{autodesktop}\Solace"; Filename: "{app}\Solace.exe"; Tasks: desktopicon
+Name: "{group}\Solace"; Filename: "{app}\Solace.exe"; AppUserModelID: "AyushBarua.Solace"
+Name: "{autodesktop}\Solace"; Filename: "{app}\Solace.exe"; Tasks: desktopicon; AppUserModelID: "AyushBarua.Solace"
 
 [Run]
 Filename: "{app}\Solace.exe"; Description: "Launch Solace now"; Flags: nowait postinstall skipifsilent

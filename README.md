@@ -93,6 +93,14 @@ venv\Scripts\pytest tests
 `build.bat` packages the app with PyInstaller (`Solace.spec`), and
 `installer.iss` builds a Windows installer with Inno Setup.
 
+## Games already on the computer
+
+Solace looks for games installed through Steam, Epic Games, GOG, Ubisoft Connect,
+Xbox, Amazon Games, itch.io, Humble, Rockstar and Battle.net, and shows them under
+On this computer on the Play page. Tools, engines and add-ons are left out. Games
+installed outside these stores, and EA games, are not found. Detected games are not used in therapy recommendations,
+and the Solace controller does not drive them yet.
+
 ## Updates and releases
 
 Installed copies of Solace update themselves from GitHub Releases. When Solace

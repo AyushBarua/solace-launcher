@@ -110,6 +110,7 @@ class MainWindow(QMainWindow):
         # ── Services ──────────────────────────────────────────────────────────
         self.game_manager = GameManager(self)
         self.game_manager.game_finished.connect(self._on_game_finished)
+        self.game_manager.game_not_started.connect(self._on_game_not_started)
         self.game_manager.download_finished.connect(self._on_download_finished)
         self.game_manager.web_game_requested.connect(self._on_web_game_requested)
         
@@ -749,8 +750,10 @@ class MainWindow(QMainWindow):
             return
 
         daily = self._session_manager.get_daily_rom()
+        # Games found on this PC use their own controls, so no controller warmup.
+        store_game = bool(game.get("detected"))
 
-        if daily is None:
+        if daily is None and not store_game:
             from ui.calibration_warmup import CalibrationWarmup
             warmup = CalibrationWarmup(processor=self.input_processor, parent=self)
             self.gamepad.raw_axes.connect(warmup.update_raw_axes)
@@ -779,8 +782,20 @@ class MainWindow(QMainWindow):
         if daily:
             self._active_session["rom"] = dict(daily)
 
-        self.hide()
+        if store_game:
+            self.showMinimized()      # stays reachable while the store starts the game
+        else:
+            self.hide()
         self.game_manager.launch(game_id, difficulty=difficulty)
+
+    def _on_game_not_started(self, name: str) -> None:
+        """A store game was never seen running: discard the session and say so."""
+        self._active_session = None
+        self.showMaximized()
+        from PyQt6.QtWidgets import QMessageBox
+        QMessageBox.information(
+            self, "Solace", f"Solace did not see {name} start.\n"
+                            "Open its store, check the game runs there, then try again.")
 
     def _get_difficulty(self) -> float:
         """Read current difficulty multiplier from global settings."""
@@ -822,7 +837,10 @@ class MainWindow(QMainWindow):
 
     def _on_game_finished(self):
         """Called when the game subprocess exits (always on the GUI thread)."""
-        self.show()
+        if self.isMinimized():
+            self.showMaximized()
+        else:
+            self.show()
         if self._active_session is None:
             return
         # Defer one event-loop tick so the window is fully rendered before
@@ -1055,6 +1073,32 @@ class MainWindow(QMainWindow):
         super().closeEvent(event)
 
 
+APP_USER_MODEL_ID = "AyushBarua.Solace"     # same id as the installer's shortcuts
+
+
+def set_app_identity(app) -> None:
+    """Name and icon, so Windows shows Solace (not Python) in the taskbar."""
+    from PyQt6.QtGui import QIcon
+    if sys.platform == "win32":
+        import ctypes
+        ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(APP_USER_MODEL_ID)
+    app.setApplicationName("Solace")
+    app.setWindowIcon(QIcon(os.path.join(os.path.dirname(__file__), "assets", "solace.ico")))
+
+
+def report_startup_crash(details: str) -> None:
+    """The installed app has no console, so save the error and say where it is."""
+    from core.paths import get_data_dir
+    path = os.path.join(get_data_dir(), "crash.log")
+    with open(path, "w", encoding="utf-8") as f:
+        f.write(details)
+    print(details)
+    from PyQt6.QtWidgets import QApplication, QMessageBox
+    app = QApplication.instance() or QApplication(sys.argv)
+    QMessageBox.critical(None, "Solace",
+                         f"Solace could not start.\nThe details were saved to:\n{path}")
+
+
 def load_fonts():
     from PyQt6.QtGui import QFont
     # ONLY load from assets/fonts/ — the top-level assets/ copies of
@@ -1135,6 +1179,7 @@ if __name__ == "__main__":
             pass  # WebEngine not installed — fallback widget will be used
 
         app = QApplication(sys.argv)
+        set_app_identity(app)
         load_fonts()
 
         # ── i18n: restore saved language before any UI is created ─────────────
@@ -1262,9 +1307,7 @@ if __name__ == "__main__":
         window.activateWindow()
         sys.exit(app.exec())
 
-    except Exception as e:
+    except Exception:
         import traceback
-        print("CRASHED DURING STARTUP:")
-        traceback.print_exc()
-        input("Press Enter to exit...")
+        report_startup_crash(traceback.format_exc())
         sys.exit(1)

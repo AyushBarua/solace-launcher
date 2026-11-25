@@ -5,3 +5,4 @@ pyinstaller
 reportlab
 bcrypt
 pyserial
+vdf

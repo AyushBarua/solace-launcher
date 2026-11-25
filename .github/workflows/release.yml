@@ -36,8 +36,8 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt pytest
 
-      - name: Test the updater
-        run: python -m pytest tests/test_updater.py tests/test_stamp_version.py -q
+      - name: Test the updater and game detection
+        run: python -m pytest tests/test_updater.py tests/test_stamp_version.py tests/test_game_scanner.py tests/test_store_launch.py -q
 
       - name: Stamp the version into the app
         run: python scripts/stamp_version.py ${{ steps.version.outputs.version }}
